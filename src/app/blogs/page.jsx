@@ -7,7 +7,7 @@ const page = () => {
       <h2> blogs page</h2>
       <ul>
         {bloglist.map((id) => (
-          <li key={bloglist}>
+          <li key={bloglist.id}>
             <Link href={`/blogs/${id}`}>Blog {id}</Link>
           </li>
         ))}

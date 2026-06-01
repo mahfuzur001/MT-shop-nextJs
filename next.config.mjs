@@ -20,6 +20,26 @@ const nextConfig = {
         port: '8000',
         pathname: '/media/**',
       },
+      {
+        protocol: 'http',
+        hostname: '*.herokuapp.com',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.herokuapp.com',
+        pathname: '/media/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '*.vercel.app',
+        pathname: '/media/**',
+      },
+      {
+        protocol: process.env.NEXT_PUBLIC_API_BASE_URL?.split('://')[0] || 'http',
+        hostname: process.env.NEXT_PUBLIC_API_BASE_URL?.split('://')[1]?.split(':')[0] || 'localhost',
+        pathname: '/media/**',
+      },
     ],
   },
 };

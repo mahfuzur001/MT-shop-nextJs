@@ -9,17 +9,24 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Restore user from localStorage on mount
     const storedUser = localStorage.getItem("user");
     const storedTokens = localStorage.getItem("tokens");
     if (storedUser && storedTokens) {
-      setUser(JSON.parse(storedUser));
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem("user");
+        localStorage.removeItem("tokens");
+      }
     }
     setLoading(false);
   }, []);
 
   const login = async (username, password) => {
-    const res = await api.post("/users/login/", { username, password });
+    const res = await api.post("/users/login/", {
+      username: username.trim(),
+      password,
+    });
     const tokens = { access: res.data.access, refresh: res.data.refresh };
     localStorage.setItem("tokens", JSON.stringify(tokens));
 
@@ -34,8 +41,8 @@ export function AuthProvider({ children }) {
 
   const register = async (username, email, password, password2) => {
     const res = await api.post("/users/register/", {
-      username,
-      email,
+      username: username.trim(),
+      email: email.trim(),
       password,
       password2,
     });

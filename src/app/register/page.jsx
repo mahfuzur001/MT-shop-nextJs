@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -15,10 +16,33 @@ export default function Register() {
   const { register } = useAuth();
   const router = useRouter();
 
+  const getErrorMessage = (err) => {
+    const data = err.response?.data;
+    if (!data) {
+      return "Could not connect to the server. Please check that the backend is running.";
+    }
+    if (typeof data === "string") return data;
+
+    return Object.entries(data)
+      .map(([field, errors]) => {
+        const message = Array.isArray(errors) ? errors.join(" ") : errors;
+        return `${field}: ${message}`;
+      })
+      .join(" | ");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess(false);
+
+    const cleanUsername = username.trim();
+    const cleanEmail = email.trim();
+
+    if (!cleanUsername || !cleanEmail) {
+      setError("Username and email are required.");
+      return;
+    }
 
     if (password !== password2) {
       setError("Passwords do not match.");
@@ -27,27 +51,14 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await register(username, email, password, password2);
+      await register(cleanUsername, cleanEmail, password, password2);
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");
-      }, 2000);
+      }, 1500);
     } catch (err) {
       console.error("Registration failed:", err);
-      // Grab error messages from SimpleJWT / DRF response
-      const data = err.response?.data;
-      let msg = "Failed to register. Please check your details.";
-      if (data) {
-        if (typeof data === "string") {
-          msg = data;
-        } else {
-          // Join multiple validation error arrays
-          msg = Object.entries(data)
-            .map(([field, errors]) => `${field}: ${Array.isArray(errors) ? errors.join(" ") : errors}`)
-            .join(" | ");
-        }
-      }
-      setError(msg);
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -55,27 +66,32 @@ export default function Register() {
 
   return (
     <div className="relative min-h-[80vh] flex items-center justify-center page-container py-12 md:py-16 overflow-hidden">
-      {/* Decorative Blur Backgrounds */}
       <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-violet-600/10 rounded-full blur-[100px] -z-10" />
       <div className="absolute bottom-1/3 right-1/3 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px] -z-10" />
 
       <div className="w-full max-w-[450px] glass-card p-8 md:p-10 shadow-2xl relative animate-fadeInUp">
-        <div className="absolute top-4 right-4 text-xs font-mono text-slate-600">SECURE_AUTH</div>
-        
+        <div className="absolute top-4 right-4 text-xs font-mono text-slate-600">
+          SECURE_AUTH
+        </div>
+
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-black text-white tracking-tight">Get Started</h2>
-          <p className="text-sm text-slate-400 mt-2">Create your new MT Shop account</p>
+          <h2 className="text-3xl font-black text-white tracking-tight">
+            Get Started
+          </h2>
+          <p className="text-sm text-slate-400 mt-2">
+            Create your new MT Shop account
+          </p>
         </div>
 
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-medium">
-            ⚠️ {error}
+            Warning: {error}
           </div>
         )}
 
         {success && (
           <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
-            ✓ Registration successful! Redirecting to login page...
+            Registration successful. Redirecting to login page...
           </div>
         )}
 
@@ -91,6 +107,7 @@ export default function Register() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="input-glass"
+              autoComplete="username"
             />
           </div>
 
@@ -105,6 +122,7 @@ export default function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input-glass"
+              autoComplete="email"
             />
           </div>
 
@@ -114,11 +132,12 @@ export default function Register() {
             </label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="Use at least 8 characters"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input-glass"
+              autoComplete="new-password"
             />
           </div>
 
@@ -128,11 +147,12 @@ export default function Register() {
             </label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="Repeat your password"
               required
               value={password2}
               onChange={(e) => setPassword2(e.target.value)}
               className="input-glass"
+              autoComplete="new-password"
             />
           </div>
 
@@ -147,7 +167,10 @@ export default function Register() {
 
         <div className="mt-8 pt-6 border-t border-white/5 text-center text-sm text-slate-400">
           Already have an account?{" "}
-          <Link href="/login" className="text-violet-400 hover:text-violet-300 font-semibold underline underline-offset-4">
+          <Link
+            href="/login"
+            className="text-violet-400 hover:text-violet-300 font-semibold underline underline-offset-4"
+          >
             Sign in
           </Link>
         </div>

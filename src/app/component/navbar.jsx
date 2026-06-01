@@ -1,6 +1,7 @@
 "use client";
+
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../lib/AuthContext";
 
 export default function Header() {
@@ -11,10 +12,30 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "";
+      window.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen]);
+
+  const toggleMenu = () => setIsOpen((open) => !open);
+  const closeMenu = () => setIsOpen(false);
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -24,38 +45,45 @@ export default function Header() {
     { name: "Blog", href: "/blogs" },
   ];
 
+  const mobileMenuLinkStyle = {
+    display: "block",
+    padding: "12px 16px",
+    color: "var(--text-secondary)",
+    textDecoration: "none",
+    borderRadius: "var(--radius-md)",
+    transition: "all 0.2s",
+    background: "transparent",
+    fontSize: "15px",
+    fontWeight: 600,
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 nav-glass ${
         scrolled ? "shadow-lg" : "shadow-none"
       }`}
     >
-      <nav className="page-container flex items-center justify-between py-4">
-        {/* Logo */}
+      <nav className="page-container flex items-center justify-between gap-4 py-4">
         <Link
           href="/"
+          className="flex items-center gap-1 flex-shrink-0"
           style={{
             fontSize: "1.75rem",
             fontWeight: 800,
             textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: "4px",
           }}
         >
           <span className="gradient-text-gold">MT</span>
           <span style={{ color: "var(--text-primary)" }}>Shop</span>
         </Link>
 
-        {/* Desktop Nav */}
         <ul
           style={{
-            display: "flex",
             alignItems: "center",
             gap: "32px",
             listStyle: "none",
           }}
-          className="hidden lg:flex"
+          className="desktop-nav"
         >
           {navLinks.map((link) => (
             <li key={link.name}>
@@ -70,10 +98,10 @@ export default function Header() {
                   position: "relative",
                 }}
                 onMouseEnter={(e) =>
-                  (e.target.style.color = "var(--text-primary)")
+                  (e.currentTarget.style.color = "var(--text-primary)")
                 }
                 onMouseLeave={(e) =>
-                  (e.target.style.color = "var(--text-secondary)")
+                  (e.currentTarget.style.color = "var(--text-secondary)")
                 }
               >
                 {link.name}
@@ -82,14 +110,12 @@ export default function Header() {
           ))}
         </ul>
 
-        {/* Right Side */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: "16px" }}
-          className="hidden lg:flex"
+          style={{ alignItems: "center", gap: "16px" }}
+          className="desktop-actions flex-shrink-0"
         >
           {isAuthenticated ? (
             <>
-              {/* Wishlist */}
               <Link
                 href="/wishlist"
                 style={{
@@ -98,10 +124,10 @@ export default function Header() {
                   position: "relative",
                 }}
                 onMouseEnter={(e) =>
-                  (e.target.style.color = "var(--accent-rose)")
+                  (e.currentTarget.style.color = "var(--accent-rose)")
                 }
                 onMouseLeave={(e) =>
-                  (e.target.style.color = "var(--text-secondary)")
+                  (e.currentTarget.style.color = "var(--text-secondary)")
                 }
                 title="Wishlist"
               >
@@ -117,7 +143,6 @@ export default function Header() {
                 </svg>
               </Link>
 
-              {/* Cart */}
               <Link
                 href="/cart"
                 style={{
@@ -126,10 +151,11 @@ export default function Header() {
                   position: "relative",
                 }}
                 onMouseEnter={(e) =>
-                  (e.target.style.color = "var(--accent-violet-light)")
+                  (e.currentTarget.style.color =
+                    "var(--accent-violet-light)")
                 }
                 onMouseLeave={(e) =>
-                  (e.target.style.color = "var(--text-secondary)")
+                  (e.currentTarget.style.color = "var(--text-secondary)")
                 }
                 title="Cart"
               >
@@ -147,7 +173,6 @@ export default function Header() {
                 </svg>
               </Link>
 
-              {/* Orders */}
               <Link
                 href="/orders"
                 style={{
@@ -155,10 +180,10 @@ export default function Header() {
                   transition: "color 0.3s",
                 }}
                 onMouseEnter={(e) =>
-                  (e.target.style.color = "var(--accent-emerald)")
+                  (e.currentTarget.style.color = "var(--accent-emerald)")
                 }
                 onMouseLeave={(e) =>
-                  (e.target.style.color = "var(--text-secondary)")
+                  (e.currentTarget.style.color = "var(--text-secondary)")
                 }
                 title="My Orders"
               >
@@ -176,7 +201,6 @@ export default function Header() {
                 </svg>
               </Link>
 
-              {/* Profile */}
               <div
                 style={{
                   display: "flex",
@@ -214,10 +238,11 @@ export default function Header() {
                     transition: "all 0.3s",
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.background = "rgba(244, 63, 94, 0.1)";
+                    e.currentTarget.style.background =
+                      "rgba(244, 63, 94, 0.1)";
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.background = "transparent";
+                    e.currentTarget.style.background = "transparent";
                   }}
                 >
                   Logout
@@ -227,12 +252,18 @@ export default function Header() {
           ) : (
             <>
               <Link href="/login">
-                <button className="btn-outline" style={{ padding: "8px 20px", fontSize: "13px" }}>
+                <button
+                  className="btn-outline"
+                  style={{ padding: "8px 20px", fontSize: "13px" }}
+                >
                   Login
                 </button>
               </Link>
               <Link href="/register">
-                <button className="btn-primary" style={{ padding: "8px 20px", fontSize: "13px" }}>
+                <button
+                  className="btn-primary"
+                  style={{ padding: "8px 20px", fontSize: "13px" }}
+                >
                   Sign Up
                 </button>
               </Link>
@@ -240,17 +271,23 @@ export default function Header() {
           )}
         </div>
 
-        {/* Mobile Hamburger */}
         <button
           onClick={toggleMenu}
-          className="lg:hidden"
+          className="mobile-menu-button"
+          type="button"
           style={{
             background: "none",
             border: "none",
             color: "var(--text-primary)",
             cursor: "pointer",
-            padding: "4px",
+            padding: "8px",
+            zIndex: 70,
+            position: "relative",
+            pointerEvents: "auto",
           }}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+          aria-controls="mobile-nav-drawer"
         >
           <svg
             width="28"
@@ -259,42 +296,40 @@ export default function Header() {
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             {isOpen ? (
               <path d="M18 6L6 18M6 6l12 12" />
             ) : (
-              <path d="M4 6h16M4 12h16M4 18h16" />
+              <>
+                <path d="M3 7h18" />
+                <path d="M3 12h18" />
+                <path d="M3 17h18" />
+              </>
             )}
           </svg>
         </button>
       </nav>
 
-      {/* Mobile Drawer */}
       {isOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.6)",
-            backdropFilter: "blur(8px)",
-            zIndex: 40,
-          }}
-          onClick={toggleMenu}
+        <button
+          type="button"
+          className="mobile-nav-backdrop"
+          aria-label="Close menu"
+          onClick={closeMenu}
         />
       )}
-      <div
+
+      <aside
+        id="mobile-nav-drawer"
+        className="mobile-nav-drawer"
+        aria-hidden={!isOpen}
         style={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          height: "100vh",
-          width: "280px",
-          background: "var(--bg-secondary)",
-          borderLeft: "1px solid var(--border-subtle)",
           transform: isOpen ? "translateX(0)" : "translateX(100%)",
-          transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          zIndex: 50,
-          padding: "24px",
+          opacity: isOpen ? 1 : 0,
+          visibility: isOpen ? "visible" : "hidden",
+          pointerEvents: isOpen ? "auto" : "none",
         }}
       >
         <div
@@ -302,104 +337,113 @@ export default function Header() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: "32px",
           }}
         >
-          <span
-            style={{ fontSize: "1.25rem", fontWeight: 700 }}
-            className="gradient-text"
-          >
-            Menu
-          </span>
-          <button
-            onClick={toggleMenu}
+          <Link
+            href="/"
+            onClick={closeMenu}
+            className="flex items-center gap-1"
             style={{
-              background: "none",
-              border: "none",
-              color: "var(--text-secondary)",
-              cursor: "pointer",
-              fontSize: "20px",
+              fontSize: "1.5rem",
+              fontWeight: 800,
+              textDecoration: "none",
             }}
           >
-            ✕
+            <span className="gradient-text-gold">MT</span>
+            <span style={{ color: "var(--text-primary)" }}>Shop</span>
+          </Link>
+
+          <button
+            type="button"
+            onClick={closeMenu}
+            className="mobile-drawer-close"
+            aria-label="Close menu"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
           </button>
         </div>
-        <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: "8px" }}>
-          {navLinks.map((link) => (
-            <li key={link.name}>
-              <Link
-                href={link.href}
-                onClick={toggleMenu}
-                style={{
-                  display: "block",
-                  padding: "12px 16px",
-                  color: "var(--text-secondary)",
-                  textDecoration: "none",
-                  borderRadius: "var(--radius-md)",
-                  transition: "all 0.2s",
-                  fontWeight: 500,
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.background = "var(--bg-glass)";
-                  e.target.style.color = "var(--text-primary)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.background = "transparent";
-                  e.target.style.color = "var(--text-secondary)";
-                }}
-              >
-                {link.name}
-              </Link>
-            </li>
-          ))}
-          <li style={{ borderTop: "1px solid var(--border-subtle)", paddingTop: "16px", marginTop: "8px" }}>
-            {isAuthenticated ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <Link href="/orders" onClick={toggleMenu} style={{ display: "block", padding: "12px 16px", color: "var(--text-secondary)", textDecoration: "none", borderRadius: "var(--radius-md)" }}>
-                  📦 My Orders
-                </Link>
-                <Link href="/cart" onClick={toggleMenu} style={{ display: "block", padding: "12px 16px", color: "var(--text-secondary)", textDecoration: "none", borderRadius: "var(--radius-md)" }}>
-                  🛒 Cart
-                </Link>
-                <Link href="/wishlist" onClick={toggleMenu} style={{ display: "block", padding: "12px 16px", color: "var(--text-secondary)", textDecoration: "none", borderRadius: "var(--radius-md)" }}>
-                  ❤️ Wishlist
-                </Link>
-                <button
-                  onClick={() => {
-                    logout();
-                    toggleMenu();
-                  }}
-                  style={{
-                    padding: "12px 16px",
-                    background: "rgba(244, 63, 94, 0.1)",
-                    border: "1px solid rgba(244, 63, 94, 0.2)",
-                    borderRadius: "var(--radius-md)",
-                    color: "var(--accent-rose)",
-                    cursor: "pointer",
-                    fontWeight: 600,
-                    textAlign: "left",
-                  }}
+
+        <nav style={{ flex: 1 }}>
+          <ul
+            style={{
+              listStyle: "none",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              padding: 0,
+              margin: 0,
+            }}
+          >
+            {navLinks.map((link) => (
+              <li key={link.name}>
+                <Link
+                  href={link.href}
+                  onClick={closeMenu}
+                  style={mobileMenuLinkStyle}
                 >
-                  Logout
+                  {link.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div className="mobile-drawer-actions">
+          {isAuthenticated ? (
+            <>
+              <div className="mobile-user-row">
+                <div className="mobile-user-avatar">
+                  {user?.username?.charAt(0).toUpperCase() || "U"}
+                </div>
+                <span>{user?.username || "Account"}</span>
+              </div>
+              <Link href="/wishlist" onClick={closeMenu} style={mobileMenuLinkStyle}>
+                Wishlist
+              </Link>
+              <Link href="/cart" onClick={closeMenu} style={mobileMenuLinkStyle}>
+                Cart
+              </Link>
+              <Link href="/orders" onClick={closeMenu} style={mobileMenuLinkStyle}>
+                My Orders
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  closeMenu();
+                }}
+                className="mobile-logout-button"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <div className="mobile-auth-buttons">
+              <Link href="/login" onClick={closeMenu}>
+                <button className="btn-outline" style={{ width: "100%" }}>
+                  Login
                 </button>
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                <Link href="/login" onClick={toggleMenu}>
-                  <button className="btn-outline" style={{ width: "100%" }}>
-                    Login
-                  </button>
-                </Link>
-                <Link href="/register" onClick={toggleMenu}>
-                  <button className="btn-primary" style={{ width: "100%" }}>
-                    Sign Up
-                  </button>
-                </Link>
-              </div>
-            )}
-          </li>
-        </ul>
-      </div>
+              </Link>
+              <Link href="/register" onClick={closeMenu}>
+                <button className="btn-primary" style={{ width: "100%" }}>
+                  Sign Up
+                </button>
+              </Link>
+            </div>
+          )}
+        </div>
+      </aside>
     </header>
   );
 }

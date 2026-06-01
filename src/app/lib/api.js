@@ -6,7 +6,15 @@ function getApiBaseUrl() {
     return process.env.NEXT_PUBLIC_API_BASE_URL;
   }
 
-  // Always use the local Django dev server in development.
+  if (typeof window !== "undefined") {
+    const { hostname } = window.location;
+    const localHosts = ["localhost", "127.0.0.1", "::1"];
+
+    if (!localHosts.includes(hostname)) {
+      return `http://${hostname}:8000`;
+    }
+  }
+
   return "http://127.0.0.1:8000";
 }
 

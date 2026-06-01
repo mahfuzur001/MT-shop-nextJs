@@ -14,21 +14,29 @@ export default function Login() {
   const { login } = useAuth();
   const router = useRouter();
 
+  const getErrorMessage = (err) => {
+    const data = err.response?.data;
+    if (!data) {
+      return "Could not connect to the server. Please check that the backend is running.";
+    }
+    if (typeof data === "string") return data;
+    if (data.detail) return data.detail;
+    if (Array.isArray(data.non_field_errors)) return data.non_field_errors[0];
+
+    return "Invalid username or password. Please try again.";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      await login(username, password);
+      await login(username.trim(), password);
       router.push("/");
     } catch (err) {
       console.error("Login failed:", err);
-      setError(
-        err.response?.data?.detail ||
-          err.response?.data?.non_field_errors?.[0] ||
-          "Invalid username or password. Please try again."
-      );
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -36,7 +44,6 @@ export default function Login() {
 
   return (
     <div className="relative min-h-[80vh] flex items-center justify-center page-container py-12 md:py-16 overflow-hidden">
-      {/* Decorative Blur Backgrounds */}
       <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-violet-600/10 rounded-full blur-[100px] -z-10" />
       <div className="absolute bottom-1/3 right-1/3 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px] -z-10" />
 
@@ -45,7 +52,6 @@ export default function Login() {
           SECURE_AUTH
         </div>
 
-        {/* Header */}
         <div className="text-center mb-10">
           <h2 className="text-3xl font-black text-white tracking-tight">
             Welcome Back
@@ -55,14 +61,12 @@ export default function Login() {
           </p>
         </div>
 
-        {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">
-            ⚠️ {error}
+            Warning: {error}
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-2">
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
@@ -75,6 +79,7 @@ export default function Login() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="input-glass w-full"
+              autoComplete="username"
             />
           </div>
 
@@ -84,11 +89,12 @@ export default function Login() {
             </label>
             <input
               type="password"
-              placeholder="••••••••"
+              placeholder="Enter your password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input-glass w-full"
+              autoComplete="current-password"
             />
           </div>
 
@@ -101,7 +107,6 @@ export default function Login() {
           </button>
         </form>
 
-        {/* Footer */}
         <div className="mt-10 pt-8 border-t border-white/5 text-center text-sm text-slate-400">
           New to MT Shop?{" "}
           <Link

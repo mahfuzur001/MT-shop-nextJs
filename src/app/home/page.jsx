@@ -1,11 +1,22 @@
-import React from 'react'
+"use client";
 
-const page = () => {
+import Banner from "../component/Banner";
+import TopSellers from "../component/TopSellers";
+import ProductList from "../component/ProductList";
+import CarouselAd from "../component/CarouselAd";
+import ContactSection from "../component/ContactSection";
+
+export default function Home() {
   return (
-    <div>
-        <h1>home page</h1>
-    </div>
-  )
-}
+    <>
+      <Banner />
 
-export default page
+      <div className="page-container">
+        <TopSellers />
+        <CarouselAd />
+        <ProductList />
+        <ContactSection />
+      </div>
+    </>
+  );
+}

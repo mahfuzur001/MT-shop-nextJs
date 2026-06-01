@@ -1,26 +1,117 @@
-'use client';
-import { useState } from 'react';
-// import axios from '@/utils/api';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "../lib/AuthContext";
 
 export default function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { login } = useAuth();
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      await login(username, password);
+      router.push("/");
+    } catch (err) {
+      console.error("Login failed:", err);
+      setError(
+        err.response?.data?.detail ||
+          err.response?.data?.non_field_errors?.[0] ||
+          "Invalid username or password. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-    <div className="h-[65vh] p-6 bg-white  rounded-2xl shadow-4xl w-[450] m-auto">
-    <form className="space-y-4  p-16 shadow-xl hover:shadow-2xl  rounded-4xl">
-    <h3 className="text-2xl font-bold mb-4 text-center">LOGIN FORM</h3>
-      <label >Email</label>
-      <input type="email" placeholder="Your Email" className="w-full p-2 border rounded-lg" />
-      <label >Password</label>
-      <input type="password" placeholder="Your password" className="w-full p-2 border rounded-lg" />
-      <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-800">
-        <h3>Login</h3>
-      </button>
-      <Link  href="/register" className="hover:text-blue-300 text-blue-500 border-b-2">create an account</Link>
-    </form>
-  </div>
-  </>
+    <div className="relative min-h-[80vh] flex items-center justify-center page-container py-12 md:py-16 overflow-hidden">
+      {/* Decorative Blur Backgrounds */}
+      <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-violet-600/10 rounded-full blur-[100px] -z-10" />
+      <div className="absolute bottom-1/3 right-1/3 translate-x-1/2 translate-y-1/2 w-80 h-80 bg-cyan-500/10 rounded-full blur-[100px] -z-10" />
+
+      <div className="w-full max-w-[450px] glass-card px-8 py-10 md:px-10 md:py-12 shadow-2xl relative">
+        <div className="absolute top-4 right-4 text-xs font-mono text-slate-600">
+          SECURE_AUTH
+        </div>
+
+        {/* Header */}
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-black text-white tracking-tight">
+            Welcome Back
+          </h2>
+          <p className="text-sm text-slate-400 mt-3">
+            Sign in to your MT Shop account
+          </p>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-6 p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm font-medium">
+            ⚠️ {error}
+          </div>
+        )}
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Username
+            </label>
+            <input
+              type="text"
+              placeholder="Enter your username"
+              required
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="input-glass w-full"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-glass w-full"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full btn-primary py-4 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Signing in..." : "Login"}
+          </button>
+        </form>
+
+        {/* Footer */}
+        <div className="mt-10 pt-8 border-t border-white/5 text-center text-sm text-slate-400">
+          New to MT Shop?{" "}
+          <Link
+            href="/register"
+            className="text-violet-400 hover:text-violet-300 font-semibold underline underline-offset-4"
+          >
+            Create an account
+          </Link>
+        </div>
+      </div>
+    </div>
   );
 }

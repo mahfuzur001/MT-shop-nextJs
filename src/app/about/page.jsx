@@ -1,70 +1,106 @@
+import React from "react";
+import Image from "next/image";
+
 export default function AboutPage() {
   return (
-    <div className="bg-white text-gray-800">
-      {/* Header */}
-      <div className="text-center py-10 bg-gray-100">
-        <h1 className="text-4xl font-bold">About Us</h1>
-        <p className="text-lg mt-2">Learn more about our journey and mission</p>
-      </div>
+    <div className="page-container py-12 md:py-16 relative overflow-hidden">
+      {/* Background ambient glowing details */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/10 rounded-full blur-[120px] -z-10" />
+      <div className="absolute bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2 w-96 h-96 bg-cyan-500/10 rounded-full blur-[120px] -z-10" />
 
-      {/* Company Introduction */}
-      <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-2 gap-10 items-center">
-          <img
-            src="/about.jpg" // replace with your image
-            alt="About our store"
-            className="rounded-lg shadow-md w-[400] h-[150] mt-16 "
-          />
-          <div>
-            <h2 className="text-2xl font-semibold mb-4">Who We Are</h2>
-            <p className="text-gray-600">
-              Welcome to MR shop, your number one source for all things [product category]. 
-              We're dedicated to providing you the very best of products, with an emphasis on quality, reliability, and uniqueness.
-            </p>
-            <p className="text-gray-600 mt-4">
-              Founded in 2025 by Mamun Ahmed, MR shop has come a long way from its beginnings. 
-              When Mamun first started out, his passion for helping others find quality items drove him to start his own business.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Mission & Vision */}
-      <section className="bg-gray-50 py-12 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-semibold mb-6">Our Mission & Vision</h2>
-          <p className="text-gray-700">
-            Our mission is to simplify shopping by delivering high-quality, affordable products right to your door.
-            We aim to build a trustworthy brand that values transparency, customer satisfaction, and innovation.
+      <div className="space-y-16 md:space-y-20">
+        {/* Header */}
+        <div className="section-header !mb-0">
+          <span className="section-badge">
+            Our Journey
+          </span>
+          <h1 className="text-4xl md:text-6xl font-black text-white tracking-tight">
+            About <span className="bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">MT Shop</span>
+          </h1>
+          <p className="text-slate-400 text-sm max-w-md">
+            Get to know our story, our passion, and the team driving next-gen e-commerce forward.
           </p>
         </div>
-      </section>
 
-      {/* Core Values */}
-      <section className="max-w-6xl mx-auto py-12 px-6">
-        <h2 className="text-2xl font-semibold text-center mb-10">Our Core Values</h2>
-        <div className="grid md:grid-cols-3 gap-8 text-center">
-          <div>
-            <h3 className="text-xl font-bold mb-2">Customer First</h3>
-            <p className="text-gray-600">We listen, understand, and serve our customers' needs with care and speed.</p>
+        {/* Company Introduction */}
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+          <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass border border-white/5 shadow-2xl p-4 flex items-center justify-center">
+            <div className="relative w-full h-full rounded-xl overflow-hidden">
+              <Image
+                src="/about.jpg"
+                fill
+                className="object-cover brightness-90 contrast-105"
+                alt="About our MT store"
+                sizes="(max-width: 768px) 100vw, 500px"
+              />
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">Integrity</h3>
-            <p className="text-gray-600">We’re honest, transparent, and committed to doing what's best for our customers and team.</p>
+          
+          <div className="space-y-6">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Who We Are</h2>
+            <p className="text-slate-400 leading-relaxed text-sm md:text-base">
+              Welcome to MT Shop, your curated store for high-end electronics, apparel, accessories, and beyond. 
+              We are dedicated to providing you with the absolute best quality products, with a focus on reliability, customer service, and sleek modern aesthetics.
+            </p>
+            <p className="text-slate-400 leading-relaxed text-sm md:text-base">
+              Founded with the vision of elevating online shopping into an interactive, immersive dark mode experience, MT Shop combines high-tech design with prompt delivery and premium packaging.
+            </p>
           </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">Innovation</h3>
-            <p className="text-gray-600">We constantly improve and push boundaries to deliver the best shopping experience.</p>
+        </section>
+
+        {/* Mission & Vision */}
+        <section className="glass-card p-8 md:p-12 border border-white/5 text-center max-w-4xl mx-auto shadow-2xl space-y-4">
+          <h2 className="text-2xl font-bold text-white tracking-tight">Our Mission & Vision</h2>
+          <p className="text-slate-400 leading-relaxed text-sm md:text-base">
+            Our mission is simple: to connect our customers with premium, carefully engineered items that simplify and enhance their daily routines. 
+            We strive to foster a secure, reliable marketplace built around transparency, tech innovation, and ultimate buyer satisfaction.
+          </p>
+        </section>
+
+        {/* Core Values */}
+        <section className="space-y-10">
+          <h2 className="text-2xl md:text-3xl font-extrabold text-white text-center tracking-tight">Our Core Values</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="glass-card p-6 border border-white/5 space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-violet-600/10 text-violet-400 flex items-center justify-center text-lg font-bold border border-violet-500/20">
+                01
+              </div>
+              <h3 className="text-lg font-bold text-white">Customer Centric</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                We design and optimize every single touchpoint around our customers, offering instant JWT authentication and rapid-checkout systems.
+              </p>
+            </div>
+
+            <div className="glass-card p-6 border border-white/5 space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-lg font-bold border border-cyan-500/20">
+                02
+              </div>
+              <h3 className="text-lg font-bold text-white">Unyielding Integrity</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                We believe in complete transparency. We don&apos;t hide hidden charges, and we provide true, honest reviews from verified buyers.
+              </p>
+            </div>
+
+            <div className="glass-card p-6 border border-white/5 space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg font-bold border border-emerald-500/20">
+                03
+              </div>
+              <h3 className="text-lg font-bold text-white">Tech Innovation</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                Leveraging Next.js Turbopack and Django REST Framework API, we deliver a rapid, seamless full-stack web application.
+              </p>
+            </div>
           </div>
+        </section>
+
+        {/* Footer Message */}
+        <div className="text-center pt-8 border-t border-white/5 space-y-2">
+          <p className="text-slate-400 text-sm">
+            Thank you for visiting us and supporting our journey.
+          </p>
+          <p className="text-sm font-bold text-white">— The MT Shop Team</p>
         </div>
-      </section>
-
-      {/* Footer Message */}
-      <div className="bg-gray-100 py-10 text-center">
-        <p className="text-lg text-gray-700">
-          Thank you for visiting us and being a part of our journey.
-        </p>
-        <p className="mt-2">– The MR shop Team</p>
       </div>
     </div>
   );
